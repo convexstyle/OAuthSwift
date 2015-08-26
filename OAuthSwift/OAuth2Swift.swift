@@ -77,7 +77,7 @@ public class OAuth2Swift: NSObject {
         var urlString = String()
         urlString += self.authorize_url
         urlString += (self.authorize_url.has("?") ? "&" : "?") + "client_id=\(self.consumer_key)"
-        urlString += "&redirect_uri=\(callbackURL.absoluteString!)"
+        urlString += "&redirect_uri=\(callbackURL.absoluteString)"
         urlString += "&response_type=\(self.response_type)"
         if (scope != "") {
           urlString += "&scope=\(scope)"
@@ -101,11 +101,11 @@ public class OAuth2Swift: NSObject {
         parameters["client_secret"] = self.consumer_secret
         parameters["code"] = code
         parameters["grant_type"] = "authorization_code"
-        parameters["redirect_uri"] = callbackURL.absoluteString!
+        parameters["redirect_uri"] = callbackURL.absoluteString
         
         self.client.post(self.access_token_url!, parameters: parameters, success: {
             data, response in
-            var responseJSON: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
+            let responseJSON: AnyObject? = try? NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers)
             var accessToken = ""
             if let parameters:NSDictionary = responseJSON as? NSDictionary{
                 accessToken = parameters["access_token"] as! String
